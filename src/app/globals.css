@@ -32,8 +32,46 @@
   --color-diff-added: #0a1a0f;
   --color-diff-removed: #1a0a0a;
 
+  /* vesper theme (code editor) */
+  --color-vesper-bg: #101010;
+  --color-vesper-fg: #ffffff;
+  --color-vesper-gutter: #505050;
+  --color-vesper-gutter-bg: #101010;
+  --color-vesper-header-bg: #101010;
+  --color-vesper-input-bg: #1c1c1c;
+  --color-vesper-border: #282828;
+  --color-vesper-caret: #ffc799;
+  --color-vesper-selection: #ffffff25;
+  --color-vesper-active-tab: #161616;
+  --color-vesper-muted: #a0a0a0;
+
   /* font sizes */
   --text-2xs: 0.8125rem;
   --text-heading-sm: 1.75rem;
   --text-heading-md: 2rem;
+}
+
+/* Code editor overlay styles (react-simple-code-editor + Vesper) */
+.code-editor-textarea {
+  outline: none !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  caret-color: var(--color-vesper-caret);
+}
+
+.code-editor-textarea::selection {
+  background-color: var(--color-vesper-selection) !important;
+}
+
+.code-editor-textarea::placeholder {
+  -webkit-text-fill-color: var(--color-vesper-gutter) !important;
+  color: var(--color-vesper-gutter) !important;
+}
+
+.code-editor-pre {
+  color: var(--color-vesper-fg);
+}
+
+.code-editor-pre .line {
+  display: inline;
 }
