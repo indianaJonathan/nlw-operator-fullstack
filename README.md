@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="https://xesque.rocketseat.dev/platform/1772214874591.svg" alt="NLW Orbiter" />
+</p>
 
-## Getting Started
+<h1 align="center">DevRoast</h1>
 
-First, run the development server:
+<p align="center">
+  Paste your code. Get roasted.
+</p>
+
+<p align="center">
+  Projeto construído durante o evento <strong>NLW Orbiter</strong> da <a href="https://rocketseat.com.br">Rocketseat</a>.
+</p>
+
+---
+
+## Sobre
+
+DevRoast é uma ferramenta que analisa trechos de código e devolve um "roast" — uma avaliação brutalmente honesta (e divertida) da qualidade do código, com nota, análise detalhada dos problemas e sugestão de correção.
+
+## Funcionalidades
+
+- **Code Input** — cole seu código no editor com syntax highlight e line numbers
+- **Roast Mode** — ative o modo "roast" para avaliações com sarcasmo máximo
+- **Score Ring** — nota visual de 0 a 10 com anel colorido (vermelho, âmbar, verde)
+- **Análise Detalhada** — cards categorizados como critical, warning ou good explicando cada ponto
+- **Suggested Fix** — diff mostrando o código original vs. a versão corrigida
+- **Shame Leaderboard** — ranking dos piores códigos já submetidos
+- **OG Image** — imagem dinâmica para compartilhamento nas redes sociais
+
+## Rotas
+
+| Rota | Descrição |
+|---|---|
+| `/` | Homepage com editor de código e preview do leaderboard |
+| `/results` | Resultado da análise com score, roast e diff |
+| `/leaderboard` | Ranking completo dos códigos mais roasted |
+| `/components` | Showcase dos componentes do design system |
+| `/og` | Geração dinâmica de OG image |
+
+## Como rodar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Instalar dependências
+pnpm install
+
+# Rodar em desenvolvimento
 pnpm dev
-# or
-bun dev
+
+# Build de produção
+pnpm build && pnpm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tecnologias
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [Next.js 16](https://nextjs.org/) — App Router + Turbopack
+- [Tailwind CSS v4](https://tailwindcss.com/) — Estilização via design tokens
+- [Biome](https://biomejs.dev/) — Linting e formatação
+- [shiki](https://shiki.style/) — Syntax highlighting
+- [tailwind-variants](https://www.tailwind-variants.org/) — Variantes de componentes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<p align="center">
+  Feito durante o <strong>NLW Orbiter</strong> da <a href="https://rocketseat.com.br">Rocketseat</a>
+</p>
