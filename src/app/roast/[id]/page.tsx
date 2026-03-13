@@ -81,7 +81,14 @@ const mockResult = {
   },
 };
 
-export default function ResultsPage() {
+export default async function RoastPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  void id; // will be used to fetch real data later
+
   const { score, verdict, roast, lang, lines, code, issues, diff } = mockResult;
 
   return (

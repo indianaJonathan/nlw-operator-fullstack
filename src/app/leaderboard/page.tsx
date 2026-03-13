@@ -1,5 +1,6 @@
 import type { BundledLanguage } from "shiki";
-import { LeaderboardEntry } from "@/components/ui/leaderboard-entry";
+import { twMerge } from "tailwind-merge";
+import { CodeBlock } from "@/components/ui/code-block";
 
 const entries: Array<{
   rank: number;
@@ -54,6 +55,48 @@ else { return !false; }`,
   },
 ];
 
+function getScoreColor(score: number): string {
+  if (score <= 3) return "text-accent-red";
+  if (score <= 6) return "text-accent-amber";
+  return "text-accent-green";
+}
+
+function EntryHeader({
+  rank,
+  score,
+  lang,
+  lines,
+}: {
+  rank: number;
+  score: number;
+  lang: string;
+  lines: number;
+}) {
+  const lineLabel = lines === 1 ? "1 line" : `${lines} lines`;
+
+  return (
+    <>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1.5 font-mono text-2xs">
+          <span className="text-text-tertiary">#</span>
+          <span className="font-bold text-accent-amber">{rank}</span>
+        </div>
+        <div className="flex items-center gap-1.5 font-mono text-xs">
+          <span className="text-text-tertiary">score:</span>
+          <span className={twMerge("text-sm font-bold", getScoreColor(score))}>
+            {score}
+          </span>
+        </div>
+      </div>
+      <span className="flex-1" />
+      <div className="flex items-center gap-3 font-mono text-xs">
+        <span className="text-text-secondary">{lang}</span>
+        <span className="text-text-tertiary">{lineLabel}</span>
+      </div>
+    </>
+  );
+}
+
 export default function LeaderboardPage() {
   return (
     <main className="min-h-screen">
@@ -83,18 +126,20 @@ export default function LeaderboardPage() {
           {entries.map((entry) => {
             const lines = entry.code.split("\n").length;
             return (
-              <LeaderboardEntry.Root key={entry.rank}>
-                <LeaderboardEntry.Meta
-                  rank={entry.rank}
-                  score={entry.score}
-                  lang={entry.lang}
-                  lines={lines}
-                />
-                <LeaderboardEntry.Code
-                  code={entry.code}
-                  lang={entry.shikiLang}
-                />
-              </LeaderboardEntry.Root>
+              <CodeBlock
+                key={entry.rank}
+                code={entry.code}
+                lang={entry.shikiLang}
+                className="rounded-none"
+                header={
+                  <EntryHeader
+                    rank={entry.rank}
+                    score={entry.score}
+                    lang={entry.lang}
+                    lines={lines}
+                  />
+                }
+              />
             );
           })}
         </div>

@@ -45,10 +45,42 @@
   --color-vesper-active-tab: #161616;
   --color-vesper-muted: #a0a0a0;
 
+  /* scrollbar */
+  --color-scrollbar-thumb: #2a2a2a;
+  --color-scrollbar-track: transparent;
+
   /* font sizes */
   --text-2xs: 0.8125rem;
   --text-heading-sm: 1.75rem;
   --text-heading-md: 2rem;
+}
+
+/* Global scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--color-scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar-thumb);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--color-scrollbar-track);
 }
 
 /* Code editor overlay styles (react-simple-code-editor + Vesper) */
@@ -70,8 +102,4 @@
 
 .code-editor-pre {
   color: var(--color-vesper-fg);
-}
-
-.code-editor-pre .line {
-  display: inline;
 }

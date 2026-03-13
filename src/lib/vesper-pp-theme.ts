@@ -1,4 +1,4 @@
-import type { ThemeRegistrationRaw } from "shiki";
+import type { ThemeRegistration } from "shiki";
 
 /**
  * Vesper++ theme for shiki.
@@ -9,7 +9,7 @@ import type { ThemeRegistrationRaw } from "shiki";
  *
  * @see https://marketplace.visualstudio.com/items?itemName=Obstinate.vesper-pp
  */
-const vesperPP: ThemeRegistrationRaw = {
+const vesperPP: ThemeRegistration = {
   name: "vesper-pp",
   type: "dark",
   colors: {

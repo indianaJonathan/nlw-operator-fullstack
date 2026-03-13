@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CodeBlock } from "@/components/ui/code-block";
 import { DiffLine } from "@/components/ui/diff-line";
-import { LeaderboardEntry } from "@/components/ui/leaderboard-entry";
 import { ScoreRing } from "@/components/ui/score-ring";
 import { Toggle } from "@/components/ui/toggle";
 
@@ -127,37 +126,29 @@ export default function ComponentsShowcase() {
           </div>
         </section>
 
-        {/* LeaderboardEntry */}
-        <section className="flex flex-col gap-6">
-          <h2 className="text-lg font-semibold text-accent-green">
-            {"<LeaderboardEntry />"}
-          </h2>
-          <div className="max-w-2xl">
-            <LeaderboardEntry.Root>
-              <LeaderboardEntry.Meta
-                rank={1}
-                score={1.2}
-                lang="javascript"
-                lines={3}
-              />
-              <LeaderboardEntry.Code
-                code={`eval(prompt("enter code"))\ndocument.write(response)\n// trust the user lol`}
-                lang="javascript"
-              />
-            </LeaderboardEntry.Root>
-          </div>
-        </section>
-
         {/* CodeBlock */}
         <section className="flex flex-col gap-6">
           <h2 className="text-lg font-semibold text-accent-green">
             {"<CodeBlock />"}
           </h2>
-          <div className="max-w-xl">
+          <div className="flex max-w-xl flex-col gap-4">
+            <h3 className="text-sm text-text-secondary">default header</h3>
             <CodeBlock
               code={sampleCode}
               lang="javascript"
               filename="calculate.js"
+            />
+          </div>
+          <div className="flex max-w-xl flex-col gap-4">
+            <h3 className="text-sm text-text-secondary">custom header</h3>
+            <CodeBlock
+              code={`eval(prompt("enter code"))\ndocument.write(response)\n// trust the user lol`}
+              lang="javascript"
+              header={
+                <span className="font-mono text-xs text-text-secondary">
+                  #1 - score: 1.2
+                </span>
+              }
             />
           </div>
         </section>

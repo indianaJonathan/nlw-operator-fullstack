@@ -11,15 +11,24 @@ import { highlight as shikiHighlight } from "@/lib/shiki";
 const MIN_LINES = 16;
 const HIGHLIGHT_DEBOUNCE_MS = 300;
 const DETECT_DEBOUNCE_MS = 400;
+const CODE_MAX_CHARS = 2500;
 
 /**
- * Strip shiki's outer `<pre><code>` wrapper, keeping only the inner
- * `<span class="line">` elements with `\n` separators.
+ * Ensure that `html` contains exactly the same number of `\n` as `code`.
+ *
+ * `react-simple-code-editor` overlays a `<pre>` on top of a `<textarea>`.
+ * Both must render the same number of visual lines; otherwise lines beyond
+ * the `<pre>` content become invisible.
  */
-function stripShikiWrapper(html: string): string {
-  return html
-    .replace(/^<pre[^>]*><code>/, "")
-    .replace(/<\/code><\/pre>\s*$/, "");
+function padNewlines(html: string, code: string): string {
+  const expected = (code.match(/\n/g) ?? []).length;
+  const actual = (html.match(/\n/g) ?? []).length;
+
+  if (actual < expected) {
+    return html + "\n".repeat(expected - actual);
+  }
+
+  return html;
 }
 
 /* ------------------------------------------------------------------ */
@@ -32,7 +41,7 @@ function CodeEditorRoot({ className, ...props }: CodeEditorRootProps) {
   return (
     <div
       className={twMerge(
-        "w-full overflow-hidden rounded border border-vesper-border bg-vesper-bg",
+        "flex w-full flex-col overflow-clip rounded border border-vesper-border bg-vesper-bg",
         className,
       )}
       {...props}
@@ -117,7 +126,11 @@ function CodeEditorBody({
   onDetectedLanguage,
   className,
 }: CodeEditorBodyProps) {
-  const [highlightedHtml, setHighlightedHtml] = useState("");
+  /** Stores the highlighted HTML **and** the source code it was generated from. */
+  const [highlightCache, setHighlightCache] = useState<{
+    code: string;
+    html: string;
+  } | null>(null);
   const highlightTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
   const detectTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
@@ -126,7 +139,7 @@ function CodeEditorBody({
   // Async highlight with debounce
   useEffect(() => {
     if (!code.trim()) {
-      setHighlightedHtml("");
+      setHighlightCache(null);
       return;
     }
 
@@ -134,13 +147,18 @@ function CodeEditorBody({
       clearTimeout(highlightTimerRef.current);
     }
 
+    const currentCode = code;
+
     highlightTimerRef.current = setTimeout(async () => {
       const langEntry = language ? languages[language] : null;
       const shikiLang = langEntry?.shikiKey ?? "javascript";
 
-      const html = await shikiHighlight(code, shikiLang);
+      const html = await shikiHighlight(currentCode, shikiLang);
       if (html) {
-        setHighlightedHtml(stripShikiWrapper(html));
+        setHighlightCache({
+          code: currentCode,
+          html: padNewlines(html, currentCode),
+        });
       }
     }, HIGHLIGHT_DEBOUNCE_MS);
 
@@ -176,11 +194,12 @@ function CodeEditorBody({
   }, [code, autoDetect, onDetectedLanguage]);
 
   // Sync highlight callback for react-simple-code-editor.
-  // Returns cached HTML or falls back to escaped plaintext.
+  // Only returns cached HTML when it matches the current code;
+  // otherwise falls back to escaped plaintext so every line is visible.
   const syncHighlight = useCallback(
     (input: string) => {
-      if (highlightedHtml) {
-        return highlightedHtml;
+      if (highlightCache && highlightCache.code === input) {
+        return highlightCache.html;
       }
       // Escape HTML so the raw code renders safely while loading
       return input
@@ -188,46 +207,84 @@ function CodeEditorBody({
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
     },
-    [highlightedHtml],
+    [highlightCache],
   );
 
   return (
-    <div className={twMerge("flex min-h-90", className)}>
-      {/* Line Numbers */}
-      <div
-        aria-hidden="true"
-        className="flex flex-col border-r border-vesper-border bg-vesper-gutter-bg px-3 py-4 font-mono text-xs leading-relaxed text-vesper-gutter"
-      >
-        {Array.from({ length: lineCount }, (_, i) => {
-          const line = i + 1;
-          return (
-            <span key={`ln-${line}`} className="text-right">
-              {line}
-            </span>
-          );
-        })}
-      </div>
+    <div className={twMerge("min-h-90 max-h-120 overflow-y-auto", className)}>
+      <div className="flex">
+        {/* Line Numbers */}
+        <div
+          aria-hidden="true"
+          className="flex flex-col border-r border-vesper-border bg-vesper-gutter-bg px-3 py-4 font-mono text-xs leading-relaxed text-vesper-gutter"
+        >
+          {Array.from({ length: lineCount }, (_, i) => {
+            const line = i + 1;
+            return (
+              <span key={`ln-${line}`} className="text-right">
+                {line}
+              </span>
+            );
+          })}
+        </div>
 
-      {/* Editor */}
-      <Editor
-        value={code}
-        onValueChange={onCodeChange}
-        highlight={syncHighlight}
-        tabSize={2}
-        padding={16}
-        textareaClassName="code-editor-textarea"
-        preClassName="code-editor-pre"
-        style={{
-          fontFamily:
-            "var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-          fontSize: "0.75rem",
-          lineHeight: "1.625",
-          flex: 1,
-          minHeight: "100%",
-          background: "transparent",
-          caretColor: "var(--color-vesper-caret)",
-        }}
-      />
+        {/* Editor */}
+        <Editor
+          placeholder="// Paste your code here"
+          value={code}
+          onValueChange={onCodeChange}
+          highlight={syncHighlight}
+          tabSize={2}
+          padding={16}
+          textareaClassName="code-editor-textarea"
+          preClassName="code-editor-pre"
+          style={{
+            fontFamily:
+              "var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+            fontSize: "0.75rem",
+            lineHeight: "1.625",
+            flex: 1,
+            background: "transparent",
+            caretColor: "var(--color-vesper-caret)",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  CodeEditorFooter                                                   */
+/* ------------------------------------------------------------------ */
+
+type CodeEditorFooterProps = ComponentProps<"div"> & {
+  /** Current character count of the code. */
+  charCount: number;
+};
+
+function CodeEditorFooter({
+  className,
+  charCount,
+  ...props
+}: CodeEditorFooterProps) {
+  const isOverLimit = charCount > CODE_MAX_CHARS;
+
+  return (
+    <div
+      className={twMerge(
+        "flex items-center justify-end border-t border-vesper-border px-4 py-2",
+        className,
+      )}
+      {...props}
+    >
+      <span
+        className={twMerge(
+          "font-mono text-2xs tabular-nums text-vesper-gutter",
+          isOverLimit && "text-accent-red",
+        )}
+      >
+        {charCount} / {CODE_MAX_CHARS}
+      </span>
     </div>
   );
 }
@@ -240,11 +297,14 @@ const CodeEditor = {
   Root: CodeEditorRoot,
   Header: CodeEditorHeader,
   Body: CodeEditorBody,
+  Footer: CodeEditorFooter,
 };
 
 export {
   CodeEditor,
+  CODE_MAX_CHARS,
   type CodeEditorRootProps,
   type CodeEditorHeaderProps,
   type CodeEditorBodyProps,
+  type CodeEditorFooterProps,
 };

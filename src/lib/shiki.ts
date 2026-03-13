@@ -10,7 +10,7 @@ const PRELOAD_LANGS: BundledLanguage[] = [
   "html",
 ];
 
-const THEME = vesperPP.name;
+const THEME = vesperPP.name as string;
 
 let highlighterPromise: ReturnType<typeof createHighlighter> | null = null;
 
@@ -30,11 +30,18 @@ function getHighlighter() {
   return highlighterPromise;
 }
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 /**
- * Highlight code to an HTML string using shiki + Vesper++ theme.
+ * Highlight code and return **flat** HTML (no `<pre>/<code>/<span class="line">`
+ * wrappers). Each token becomes a `<span style="color:…">` and lines are joined
+ * with literal `\n`.
  *
- * If the language is not yet loaded, it will be lazy-loaded first.
- * Returns an empty string if highlighting fails (e.g. unsupported lang).
+ * This output is designed for `react-simple-code-editor`, which overlays a `<pre>`
+ * on a `<textarea>`. Both must have the exact same number of `\n` characters so
+ * their visual lines stay aligned.
  */
 async function highlight(code: string, lang: BundledLanguage): Promise<string> {
   try {
@@ -45,7 +52,23 @@ async function highlight(code: string, lang: BundledLanguage): Promise<string> {
       await highlighter.loadLanguage(lang);
     }
 
-    return highlighter.codeToHtml(code, { lang, theme: THEME });
+    const { tokens } = highlighter.codeToTokens(code, { lang, theme: THEME });
+
+    const html = tokens
+      .map((line) =>
+        line.length === 0
+          ? ""
+          : line
+              .map((token) =>
+                token.color
+                  ? `<span style="color:${token.color}">${escapeHtml(token.content)}</span>`
+                  : escapeHtml(token.content),
+              )
+              .join(""),
+      )
+      .join("\n");
+
+    return html;
   } catch {
     return "";
   }

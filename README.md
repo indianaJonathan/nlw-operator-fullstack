@@ -33,10 +33,9 @@ DevRoast é uma ferramenta que analisa trechos de código e devolve um "roast" �
 | Rota | Descrição |
 |---|---|
 | `/` | Homepage com editor de código e preview do leaderboard |
-| `/results` | Resultado da análise com score, roast e diff |
+| `/roast/:id` | Resultado da análise com score, roast e diff |
 | `/leaderboard` | Ranking completo dos códigos mais roasted |
 | `/components` | Showcase dos componentes do design system |
-| `/og` | Geração dinâmica de OG image |
 
 ## Como rodar
 

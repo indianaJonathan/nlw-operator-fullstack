@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CodeEditor } from "@/components/ui/code-editor";
+import { CODE_MAX_CHARS, CodeEditor } from "@/components/ui/code-editor";
 import { Toggle } from "@/components/ui/toggle";
 import { AUTO_DETECT_KEY, languages } from "@/lib/languages";
 
@@ -12,6 +12,7 @@ function CodeEditorSection() {
   const [detectedLangKey, setDetectedLangKey] = useState<string | null>(null);
 
   const hasCode = code.trim().length > 0;
+  const isOverLimit = code.length > CODE_MAX_CHARS;
 
   const detectedLabel = detectedLangKey
     ? (languages[detectedLangKey]?.label ?? null)
@@ -49,6 +50,7 @@ function CodeEditorSection() {
           autoDetect={isAutoDetect}
           onDetectedLanguage={handleDetectedLanguage}
         />
+        <CodeEditor.Footer charCount={code.length} />
       </CodeEditor.Root>
 
       {/* Actions Bar */}
@@ -61,7 +63,7 @@ function CodeEditorSection() {
         </div>
         <Button
           variant="primary"
-          disabled={!hasCode}
+          disabled={!hasCode || isOverLimit}
           className="disabled:cursor-not-allowed enabled:cursor-pointer"
         >
           $ roast_my_code
