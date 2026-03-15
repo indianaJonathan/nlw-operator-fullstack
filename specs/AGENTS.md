@@ -50,3 +50,5 @@ Specs são documentos de decisão técnica criados **antes** da implementação.
 | `code-editor.md` | Editor de código | `react-simple-code-editor` + shiki overlay, `highlight.js/lib/common` para auto-detect, debounce de 300ms (highlight) e 400ms (detect) |
 | `drizzle-orm.md` | Banco de dados | Drizzle ORM + PostgreSQL 16, UUID PKs, `suggested_code` coluna (não tabela separada), sem tabela de users (anônimo) |
 | `trpc.md` | API layer | tRPC v11, sem superjson, prefetch+hydrate para SSR, ~35 kB bundle, 4 procedures planejadas |
+| `github-auth.md` | Autenticacao GitHub | Auth.js v5 + Drizzle adapter, sessao database, `protectedProcedure` no tRPC, userId NOT NULL em submissions, campo `anonymous` |
+| `user-roasts.md` | Meus Roasts + navbar | Pagina `/my-roasts`, dropdown de perfil com `@base-ui/react` Menu, modal de login, leaderboard com autoria, toggle anonymous |
