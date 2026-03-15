@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 import { DropdownMenu } from "@/components/ui/dropdown-menu";
 
 type NavbarAuthProps = {
@@ -13,13 +14,14 @@ type NavbarAuthProps = {
 function NavbarAuth({ session }: NavbarAuthProps) {
   if (!session) {
     return (
-      <button
-        type="button"
+      <Button
+        variant="primary"
+        size="xs"
+        className="h-full"
         onClick={() => signIn("github")}
-        className="cursor-pointer font-mono text-2xs text-text-secondary transition-colors hover:text-text-primary"
       >
-        sign_in
-      </button>
+        $ sign_in
+      </Button>
     );
   }
 
