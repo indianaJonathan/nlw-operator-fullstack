@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
 import { button } from "@/components/ui/button";
@@ -10,16 +11,58 @@ function getScoreColor(score: number): string {
   return "text-accent-green";
 }
 
+function EntryAuthor({
+  anonymous,
+  user,
+}: {
+  anonymous: boolean;
+  user: { name: string | null; image: string | null; username: string | null };
+}) {
+  if (anonymous) {
+    return (
+      <div className="flex items-center gap-1.5 font-mono text-xs">
+        <div className="flex size-6 items-center justify-center rounded-full bg-bg-elevated text-2xs text-text-tertiary">
+          ?
+        </div>
+        <span className="text-text-tertiary">anonymous</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1.5 font-mono text-xs">
+      {user.image ? (
+        <Image
+          src={user.image}
+          alt={user.name ?? "avatar"}
+          width={24}
+          height={24}
+          className="rounded-full"
+        />
+      ) : (
+        <div className="flex size-6 items-center justify-center rounded-full bg-bg-elevated text-2xs text-text-secondary">
+          {(user.name?.[0] ?? "?").toUpperCase()}
+        </div>
+      )}
+      <span className="text-text-secondary">{user.username ?? user.name}</span>
+    </div>
+  );
+}
+
 function EntryHeader({
   rank,
   score,
   lang,
   lines,
+  anonymous,
+  user,
 }: {
   rank: number;
   score: number;
   lang: string;
   lines: number;
+  anonymous: boolean;
+  user: { name: string | null; image: string | null; username: string | null };
 }) {
   const lineLabel = lines === 1 ? "1 line" : `${lines} lines`;
 
@@ -36,6 +79,7 @@ function EntryHeader({
             {score.toFixed(1)}
           </span>
         </div>
+        <EntryAuthor anonymous={anonymous} user={user} />
       </div>
       <span className="flex-1" />
       <div className="flex items-center gap-3 font-mono text-xs">
@@ -88,6 +132,8 @@ async function LeaderboardEntries() {
                 score={row.score}
                 lang={row.language}
                 lines={row.lineCount}
+                anonymous={row.anonymous}
+                user={row.user}
               />
 
               {/* Code preview */}

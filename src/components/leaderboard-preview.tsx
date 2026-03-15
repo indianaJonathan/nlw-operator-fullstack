@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { button } from "@/components/ui/button";
 import { getPreviewCode, highlightCode } from "@/lib/code-preview";
@@ -45,6 +46,7 @@ async function LeaderboardPreview() {
         <div className="flex items-center bg-bg-surface px-5 font-mono text-xs font-medium text-text-tertiary">
           <div className="w-12.5 py-3">#</div>
           <div className="w-17.5 py-3">score</div>
+          <div className="w-35 py-3">author</div>
           <div className="flex-1 py-3">code</div>
           <div className="w-25 py-3">lang</div>
         </div>
@@ -72,6 +74,35 @@ async function LeaderboardPreview() {
                 <span className="font-bold text-accent-red">
                   {row.score.toFixed(1)}
                 </span>
+              </div>
+              <div className="w-35">
+                {row.anonymous ? (
+                  <div className="flex items-center gap-1.5">
+                    <div className="flex size-5 items-center justify-center rounded-full bg-bg-elevated text-2xs text-text-tertiary">
+                      ?
+                    </div>
+                    <span className="text-text-tertiary">anonymous</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5">
+                    {row.user.image ? (
+                      <Image
+                        src={row.user.image}
+                        alt={row.user.name ?? "avatar"}
+                        width={20}
+                        height={20}
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <div className="flex size-5 items-center justify-center rounded-full bg-bg-elevated text-2xs text-text-secondary">
+                        {(row.user.name?.[0] ?? "?").toUpperCase()}
+                      </div>
+                    )}
+                    <span className="text-text-secondary">
+                      {row.user.username ?? row.user.name}
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="relative flex-1 overflow-hidden">
                 {/* Code with shiki highlighting */}

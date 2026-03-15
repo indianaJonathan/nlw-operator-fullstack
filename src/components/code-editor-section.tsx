@@ -23,6 +23,7 @@ type PendingRoast = {
   language: string;
   detectedLanguage: string | null;
   roastMode: boolean;
+  anonymous: boolean;
 };
 
 function savePendingRoast(data: PendingRoast) {
@@ -52,6 +53,7 @@ function CodeEditorSection({ isAuthenticated }: CodeEditorSectionProps) {
   const [language, setLanguage] = useState(AUTO_DETECT_KEY);
   const [detectedLangKey, setDetectedLangKey] = useState<string | null>(null);
   const [roastMode, setRoastMode] = useState(true);
+  const [anonymous, setAnonymous] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   const hasCode = code.trim().length > 0;
@@ -88,6 +90,11 @@ function CodeEditorSection({ isAuthenticated }: CodeEditorSectionProps) {
   const createSubmission = useMutation(
     trpc.submission.create.mutationOptions({
       onSuccess: (data) => {
+        setCode("");
+        setLanguage(AUTO_DETECT_KEY);
+        setDetectedLangKey(null);
+        setRoastMode(true);
+        setAnonymous(false);
         router.push(`/roast/${data.id}`);
       },
     }),
@@ -106,6 +113,7 @@ function CodeEditorSection({ isAuthenticated }: CodeEditorSectionProps) {
     setCode(pending.code);
     setLanguage(pending.language);
     setRoastMode(pending.roastMode);
+    setAnonymous(pending.anonymous ?? false);
 
     const editorKey =
       pending.language === AUTO_DETECT_KEY
@@ -118,7 +126,7 @@ function CodeEditorSection({ isAuthenticated }: CodeEditorSectionProps) {
       code: pending.code.trim(),
       language: dbLang,
       roastMode: pending.roastMode,
-      anonymous: false,
+      anonymous: pending.anonymous ?? false,
     });
   }, [isAuthenticated, mutate]);
 
@@ -128,6 +136,7 @@ function CodeEditorSection({ isAuthenticated }: CodeEditorSectionProps) {
       language,
       detectedLanguage: detectedLangKey,
       roastMode,
+      anonymous,
     });
   };
 
@@ -143,7 +152,7 @@ function CodeEditorSection({ isAuthenticated }: CodeEditorSectionProps) {
       code: code.trim(),
       language: resolveDbLanguage(),
       roastMode,
-      anonymous: false,
+      anonymous,
     });
   };
 
@@ -175,15 +184,26 @@ function CodeEditorSection({ isAuthenticated }: CodeEditorSectionProps) {
 
       {/* Actions Bar */}
       <div className="flex w-full max-w-195 items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Toggle
-            checked={roastMode}
-            onCheckedChange={setRoastMode}
-            label="roast mode"
-          />
-          <span className="text-xs text-text-tertiary">
-            {roastMode ? "// maximum sarcasm enabled" : "// professional mode"}
-          </span>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
+            <Toggle
+              checked={roastMode}
+              onCheckedChange={setRoastMode}
+              label="roast mode"
+            />
+            <span className="text-xs text-text-tertiary">
+              {roastMode
+                ? "// maximum sarcasm enabled"
+                : "// professional mode"}
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Toggle
+              checked={anonymous}
+              onCheckedChange={setAnonymous}
+              label="anonymous"
+            />
+          </div>
         </div>
         <Button
           variant="primary"

@@ -82,13 +82,33 @@ async function queryById(id: string) {
   cacheLife({ stale: ONE_HOUR, revalidate: ONE_HOUR, expire: ONE_DAY });
   cacheTag(`submission-${id}`);
 
-  const [submission] = await db
-    .select()
+  const [row] = await db
+    .select({
+      id: submissions.id,
+      userId: submissions.userId,
+      code: submissions.code,
+      language: submissions.language,
+      lineCount: submissions.lineCount,
+      roastMode: submissions.roastMode,
+      anonymous: submissions.anonymous,
+      score: submissions.score,
+      verdict: submissions.verdict,
+      roast: submissions.roast,
+      suggestedCode: submissions.suggestedCode,
+      createdAt: submissions.createdAt,
+      user: {
+        name: users.name,
+        image: users.image,
+        username: users.username,
+        email: users.email,
+      },
+    })
     .from(submissions)
+    .innerJoin(users, eq(submissions.userId, users.id))
     .where(eq(submissions.id, id))
     .limit(1);
 
-  if (!submission) return null;
+  if (!row) return null;
 
   const issueList = await db
     .select()
@@ -96,7 +116,7 @@ async function queryById(id: string) {
     .where(eq(issues.submissionId, id))
     .orderBy(asc(issues.order));
 
-  return { ...submission, issues: issueList };
+  return { ...row, issues: issueList };
 }
 
 async function queryMyRoasts(userId: string) {

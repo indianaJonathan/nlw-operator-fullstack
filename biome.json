@@ -24,7 +24,8 @@
       "includes": [
         "src/components/ui/code-block.tsx",
         "src/components/leaderboard-preview.tsx",
-        "src/components/leaderboard-entries.tsx"
+        "src/components/leaderboard-entries.tsx",
+        "src/components/my-roasts-entries.tsx"
       ],
       "linter": {
         "rules": {

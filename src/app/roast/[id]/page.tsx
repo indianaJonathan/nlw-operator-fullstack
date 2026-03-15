@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { AnalysisCard } from "@/components/ui/analysis-card";
 import { Badge } from "@/components/ui/badge";
@@ -76,6 +77,8 @@ export default async function RoastPage({
     code,
     suggestedCode,
     issues,
+    anonymous,
+    user,
   } = result;
 
   const shikiLang = shikiLangMap[language] ?? "plaintext";
@@ -111,6 +114,46 @@ export default async function RoastPage({
 
         {/* Divider */}
         <div className="h-px bg-border-primary" />
+
+        {/* Author */}
+        <div className="flex items-center gap-3">
+          {anonymous ? (
+            <>
+              <div className="flex size-10 items-center justify-center rounded-full bg-bg-elevated font-mono text-sm text-text-tertiary">
+                ?
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="font-mono text-sm text-text-primary">
+                  anonymous
+                </span>
+              </div>
+            </>
+          ) : (
+            <>
+              {user.image ? (
+                <Image
+                  src={user.image}
+                  alt={user.name ?? "avatar"}
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                />
+              ) : (
+                <div className="flex size-10 items-center justify-center rounded-full bg-bg-elevated font-mono text-sm text-text-secondary">
+                  {(user.name?.[0] ?? "?").toUpperCase()}
+                </div>
+              )}
+              <div className="flex flex-col gap-0.5">
+                <span className="font-mono text-sm text-text-primary">
+                  {user.username ?? user.name}
+                </span>
+                <span className="font-mono text-xs text-text-tertiary">
+                  {user.email}
+                </span>
+              </div>
+            </>
+          )}
+        </div>
 
         {/* Submitted Code Section */}
         <div className="flex flex-col gap-4">
