@@ -58,6 +58,22 @@ pnpm build && pnpm start
 - [shiki](https://shiki.style/) — Syntax highlighting
 - [tailwind-variants](https://www.tailwind-variants.org/) — Variantes de componentes
 
+## Contributing
+
+```bash
+# 1. Fork o repositorio
+# 2. Crie uma branch para sua feature
+git checkout -b feat/minha-feature
+
+# 3. Commit suas alteracoes
+git commit -m "feat: descricao da feature"
+
+# 4. Push para o fork
+git push origin feat/minha-feature
+
+# 5. Abra um Pull Request
+```
+
 ---
 
 <p align="center">

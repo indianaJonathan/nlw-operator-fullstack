@@ -184,31 +184,36 @@ function CodeEditorSection({ isAuthenticated }: CodeEditorSectionProps) {
 
       {/* Actions Bar */}
       <div className="flex w-full max-w-195 flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-3 md:flex-row md:gap-6">
+          <div className="flex flex-col gap-1">
             <Toggle
               checked={roastMode}
               onCheckedChange={setRoastMode}
               label="roast mode"
             />
-            <span className="hidden text-xs text-text-tertiary md:inline">
+            <span className="whitespace-nowrap text-xs text-text-tertiary">
               {roastMode
                 ? "// maximum sarcasm enabled"
                 : "// professional mode"}
             </span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-1">
             <Toggle
               checked={anonymous}
               onCheckedChange={setAnonymous}
               label="anonymous"
             />
+            <span className="whitespace-nowrap text-xs text-text-tertiary">
+              {anonymous
+                ? "// ashamed of your code?"
+                : "// bad code, proud dev"}
+            </span>
           </div>
         </div>
         <Button
           variant="primary"
           disabled={!hasCode || isOverLimit || createSubmission.isPending}
-          className="w-full disabled:cursor-not-allowed enabled:cursor-pointer md:w-auto"
+          className="w-full shrink-0 whitespace-nowrap disabled:cursor-not-allowed enabled:cursor-pointer md:w-auto"
           onClick={handleSubmit}
         >
           {createSubmission.isPending ? "$ roasting..." : "$ roast_my_code"}
