@@ -90,11 +90,41 @@ const shikiLangMap: Record<string, BundledLanguageFull> = {
   shell: "shellscript",
 };
 
+/**
+ * Maps editor language keys to DB language enum values.
+ * Editor keys like "jsx", "tsx", "bash" don't exist in the DB enum,
+ * so they are mapped to their closest match. Languages without a
+ * match fall back to "plaintext".
+ */
+const editorKeyToDbLanguage: Record<string, string> = {
+  javascript: "javascript",
+  typescript: "typescript",
+  jsx: "javascript",
+  tsx: "typescript",
+  python: "python",
+  html: "html",
+  css: "css",
+  json: "plaintext",
+  sql: "sql",
+  bash: "shell",
+  c: "c",
+  cpp: "cpp",
+  java: "java",
+  php: "php",
+  r: "plaintext",
+  yaml: "plaintext",
+  markdown: "plaintext",
+  graphql: "plaintext",
+  scss: "css",
+  xml: "html",
+};
+
 export {
   languages,
   languageList,
   hljsToKey,
   shikiLangMap,
+  editorKeyToDbLanguage,
   AUTO_DETECT_KEY,
   type Language,
 };
