@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { auth } from "@/auth";
 import { CodeEditorSection } from "@/components/code-editor-section";
 import { LeaderboardPreview } from "@/components/leaderboard-preview";
 import { LeaderboardPreviewSkeleton } from "@/components/leaderboard-preview-skeleton";
@@ -10,6 +11,7 @@ import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 export default async function Home() {
   await connection();
   prefetch(trpc.submission.getStats.queryOptions());
+  const session = await auth();
 
   return (
     <HydrateClient>
@@ -29,7 +31,7 @@ export default async function Home() {
             </p>
           </div>
 
-          <CodeEditorSection />
+          <CodeEditorSection isAuthenticated={!!session} />
 
           {/* Footer Stats */}
           <StatsCounter />

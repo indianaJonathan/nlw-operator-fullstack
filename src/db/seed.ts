@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { issues, submissions } from "./schema";
+import { issues, submissions, users } from "./schema";
 
 const client = postgres(process.env.DATABASE_URL as string, { max: 1 });
 const db = drizzle(client, { casing: "snake_case" });
@@ -489,10 +489,38 @@ function pickRoast(score: number): string {
   return faker.helpers.arrayElement(roasts.slice(19));
 }
 
-async function seed() {
-  console.log("Seeding database with 100 submissions...");
+const USER_COUNT = 10;
+const SUBMISSION_COUNT = 100;
 
-  for (let i = 0; i < 100; i++) {
+async function seed() {
+  console.log(`Seeding database with ${USER_COUNT} users...`);
+
+  const createdUsers: { id: string }[] = [];
+
+  for (let i = 0; i < USER_COUNT; i++) {
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const username = faker.internet
+      .username({ firstName, lastName })
+      .toLowerCase();
+
+    const [user] = await db
+      .insert(users)
+      .values({
+        name: `${firstName} ${lastName}`,
+        email: faker.internet.email({ firstName, lastName }),
+        image: faker.image.avatarGitHub(),
+        username,
+      })
+      .returning({ id: users.id });
+
+    createdUsers.push(user);
+  }
+
+  console.log(`  ...created ${createdUsers.length} users`);
+  console.log(`Seeding database with ${SUBMISSION_COUNT} submissions...`);
+
+  for (let i = 0; i < SUBMISSION_COUNT; i++) {
     const language = faker.helpers.arrayElement(languages);
     const snippets = codeSnippets[language] ?? codeSnippets.javascript;
     const code = faker.helpers.arrayElement(snippets);
@@ -506,14 +534,17 @@ async function seed() {
       from: "2025-01-01",
       to: new Date(),
     });
+    const user = faker.helpers.arrayElement(createdUsers);
 
     const [submission] = await db
       .insert(submissions)
       .values({
+        userId: user.id,
         code,
         language,
         lineCount,
         roastMode: faker.datatype.boolean({ probability: 0.85 }),
+        anonymous: faker.datatype.boolean({ probability: 0.3 }),
         score,
         verdict,
         roast,
@@ -536,7 +567,7 @@ async function seed() {
     }
 
     if ((i + 1) % 25 === 0) {
-      console.log(`  ...inserted ${i + 1}/100 submissions`);
+      console.log(`  ...inserted ${i + 1}/${SUBMISSION_COUNT} submissions`);
     }
   }
 

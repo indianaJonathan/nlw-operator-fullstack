@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { BundledLanguage } from "shiki";
 import { codeToHtml } from "shiki";
 import { twMerge } from "tailwind-merge";
+import { vesperPP } from "@/lib/vesper-pp-theme";
 
 type CodeBlockProps = {
   code: string;
@@ -37,7 +38,7 @@ async function cachedHighlight(code: string, lang: BundledLanguage) {
 
   return codeToHtml(code, {
     lang,
-    theme: "vesper",
+    theme: vesperPP,
   });
 }
 

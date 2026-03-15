@@ -1,6 +1,7 @@
 import { cacheLife } from "next/cache";
 import { codeToHtml } from "shiki";
 import { shikiLangMap } from "@/lib/languages";
+import { vesperPP } from "@/lib/vesper-pp-theme";
 
 const CODE_PREVIEW_LINES = 3;
 
@@ -53,7 +54,7 @@ async function highlightCode(code: string, language: string) {
 
   const html = await codeToHtml(code, {
     lang,
-    theme: "vesper",
+    theme: vesperPP,
   });
 
   // Remove shiki inline background-color so the row bg shows through

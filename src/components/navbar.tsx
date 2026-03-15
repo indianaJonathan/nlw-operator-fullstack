@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { auth } from "@/auth";
+import { NavbarAuth } from "@/components/navbar-auth";
 
-function Navbar() {
+async function Navbar() {
+  const session = await auth();
+
   return (
     <header className="flex h-14 items-center justify-between border-b border-border-primary bg-bg-page px-10">
       <Link href="/" className="flex items-center gap-2 font-mono">
@@ -15,6 +19,7 @@ function Navbar() {
         >
           leaderboard
         </Link>
+        <NavbarAuth session={session} />
       </nav>
     </header>
   );

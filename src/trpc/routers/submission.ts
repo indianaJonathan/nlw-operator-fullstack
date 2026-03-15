@@ -1,11 +1,11 @@
 import { TRPCError } from "@trpc/server";
-import { asc, avg, count, eq } from "drizzle-orm";
+import { asc, avg, count, desc, eq } from "drizzle-orm";
 import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 import { z } from "zod/v4";
 import { db } from "@/db";
-import { issues, languageEnum, submissions } from "@/db/schema";
+import { issues, languageEnum, submissions, users } from "@/db/schema";
 import { analyzeCode } from "@/lib/analyze-code";
-import { baseProcedure, createTRPCRouter } from "../init";
+import { baseProcedure, createTRPCRouter, protectedProcedure } from "../init";
 
 const ONE_HOUR = 3600;
 const ONE_DAY = 86400;
@@ -39,8 +39,15 @@ async function queryLeaderboardPreview() {
       code: submissions.code,
       language: submissions.language,
       score: submissions.score,
+      anonymous: submissions.anonymous,
+      user: {
+        name: users.name,
+        image: users.image,
+        username: users.username,
+      },
     })
     .from(submissions)
+    .innerJoin(users, eq(submissions.userId, users.id))
     .orderBy(asc(submissions.score))
     .limit(3);
 }
@@ -57,8 +64,15 @@ async function queryLeaderboard() {
       language: submissions.language,
       lineCount: submissions.lineCount,
       score: submissions.score,
+      anonymous: submissions.anonymous,
+      user: {
+        name: users.name,
+        image: users.image,
+        username: users.username,
+      },
     })
     .from(submissions)
+    .innerJoin(users, eq(submissions.userId, users.id))
     .orderBy(asc(submissions.score))
     .limit(20);
 }
@@ -85,6 +99,27 @@ async function queryById(id: string) {
   return { ...submission, issues: issueList };
 }
 
+async function queryMyRoasts(userId: string) {
+  "use cache";
+  cacheLife({ stale: ONE_HOUR, revalidate: ONE_HOUR, expire: ONE_DAY });
+  cacheTag(`my-roasts-${userId}`);
+
+  return db
+    .select({
+      id: submissions.id,
+      code: submissions.code,
+      language: submissions.language,
+      lineCount: submissions.lineCount,
+      score: submissions.score,
+      anonymous: submissions.anonymous,
+      roast: submissions.roast,
+      createdAt: submissions.createdAt,
+    })
+    .from(submissions)
+    .where(eq(submissions.userId, userId))
+    .orderBy(desc(submissions.createdAt));
+}
+
 export const submissionRouter = createTRPCRouter({
   getStats: baseProcedure.query(() => queryStats()),
 
@@ -96,15 +131,22 @@ export const submissionRouter = createTRPCRouter({
     .input(z.object({ id: z.uuid() }))
     .query(({ input }) => queryById(input.id)),
 
-  create: baseProcedure
+  getMyRoasts: protectedProcedure.query(({ ctx }) =>
+    queryMyRoasts(ctx.session.user.id),
+  ),
+
+  create: protectedProcedure
     .input(
       z.object({
         code: z.string().min(1).max(2500),
         language: z.enum(languageEnum.enumValues),
         roastMode: z.boolean(),
+        anonymous: z.boolean(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
       let analysis: Awaited<ReturnType<typeof analyzeCode>>;
 
       try {
@@ -128,10 +170,12 @@ export const submissionRouter = createTRPCRouter({
           const [sub] = await tx
             .insert(submissions)
             .values({
+              userId,
               code: input.code,
               language: input.language,
               lineCount,
               roastMode: input.roastMode,
+              anonymous: input.anonymous,
               score: analysis.score,
               verdict: analysis.verdict,
               roast: analysis.roast,
@@ -157,6 +201,7 @@ export const submissionRouter = createTRPCRouter({
         revalidateTag("submission-stats", { expire: ONE_DAY });
         revalidateTag("leaderboard-preview", { expire: ONE_DAY });
         revalidateTag("leaderboard", { expire: ONE_DAY });
+        revalidateTag(`my-roasts-${userId}`, { expire: ONE_DAY });
 
         return { id: submission.id };
       } catch (err) {
