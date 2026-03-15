@@ -210,6 +210,33 @@ export {
 };
 ```
 
+## Componentes Existentes
+
+### Atômicos (com `tv()`)
+
+| Arquivo | Componente | Variantes | Descrição |
+|---------|-----------|-----------|-----------|
+| `button.tsx` | `Button` | `variant` (primary/secondary/danger/link), `size` (default/sm/xs) | Botão com todas as combinações de visual e tamanho. A função `button()` é usada standalone para estilizar `<Link>` |
+| `badge.tsx` | `Badge` | `variant` (critical/warning/good) | Badge com dot colorido + texto. Usa duas funções tv: `badge` e `dot` |
+| `diff-line.tsx` | `DiffLine` | `variant` (added/removed/context) | Linha de diff com prefixo (+/-/espaço). Usa três funções tv: `diffLine`, `diffPrefix`, `diffCode` |
+
+### Compostos (namespace object)
+
+| Arquivo | Componente | Sub-partes | Descrição |
+|---------|-----------|------------|-----------|
+| `analysis-card.tsx` | `AnalysisCard` | `Root`, `Title`, `Description` | Card de análise de código com severidade |
+| `code-editor.tsx` | `CodeEditor` | `Root`, `Header`, `Body`, `Footer` | Editor de código client-side com highlight shiki, auto-detect de linguagem, dropdown, contador de chars. Componente mais complexo (~310 linhas) |
+
+### Especiais (sem `tv()`, props computacionais)
+
+| Arquivo | Componente | Props chave | Descrição |
+|---------|-----------|-------------|-----------|
+| `code-block.tsx` | `CodeBlock` | `code`, `lang`, `filename?`, `header?` | **Async server component** — usa shiki no server com tema `vesper` built-in. Aceita `header` customizado ou renderiza header padrão com traffic lights |
+| `score-ring.tsx` | `ScoreRing` | `score`, `maxScore?` | SVG circular com gradiente e cor dinâmica baseada no score (vermelho ≤3, âmbar ≤6, verde >6) |
+| `toggle.tsx` | `Toggle` | `checked`, `onCheckedChange`, `label` | **Client component** — wrapper do `Switch` do `@base-ui/react` |
+
+---
+
 ## Checklist para Novos Componentes
 
 - [ ] Arquivo em kebab-case

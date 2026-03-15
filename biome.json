@@ -20,7 +20,11 @@
   },
   "overrides": [
     {
-      "includes": ["src/components/ui/code-block.tsx"],
+      "includes": [
+        "src/components/ui/code-block.tsx",
+        "src/components/leaderboard-preview.tsx",
+        "src/components/leaderboard-entries.tsx"
+      ],
       "linter": {
         "rules": {
           "security": {

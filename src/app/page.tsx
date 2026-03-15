@@ -1,40 +1,14 @@
 import Link from "next/link";
+import { connection } from "next/server";
+import { Suspense } from "react";
 import { CodeEditorSection } from "@/components/code-editor-section";
+import { LeaderboardPreview } from "@/components/leaderboard-preview";
+import { LeaderboardPreviewSkeleton } from "@/components/leaderboard-preview-skeleton";
 import { StatsCounter } from "@/components/stats-counter";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 
-export const dynamic = "force-dynamic";
-
-const leaderboardData = [
-  {
-    rank: 1,
-    score: 1.2,
-    code: [
-      'eval(prompt("enter code"))',
-      "document.write(response)",
-      "// trust the user lol",
-    ],
-    lang: "javascript",
-  },
-  {
-    rank: 2,
-    score: 1.8,
-    code: [
-      "if (x == true) { return true; }",
-      "else if (x == false) { return false; }",
-      "else { return !false; }",
-    ],
-    lang: "typescript",
-  },
-  {
-    rank: 3,
-    score: 2.1,
-    code: ["SELECT * FROM users WHERE 1=1", "-- TODO: add authentication"],
-    lang: "sql",
-  },
-];
-
-export default function Home() {
+export default async function Home() {
+  await connection();
   prefetch(trpc.submission.getStats.queryOptions());
 
   return (
@@ -85,65 +59,10 @@ export default function Home() {
             {"// the worst code on the internet, ranked by shame"}
           </p>
 
-          {/* Table */}
-          <div className="overflow-hidden rounded border border-border-primary">
-            {/* Table Header */}
-            <div className="flex items-center bg-bg-surface px-5 font-mono text-xs font-medium text-text-tertiary">
-              <div className="w-12.5 py-3">#</div>
-              <div className="w-17.5 py-3">score</div>
-              <div className="flex-1 py-3">code</div>
-              <div className="w-25 py-3">lang</div>
-            </div>
-
-            {/* Table Rows */}
-            {leaderboardData.map((row, index) => (
-              <div
-                key={row.rank}
-                className={`flex items-start px-5 py-4 font-mono text-xs ${index < leaderboardData.length - 1 ? "border-b border-border-primary" : ""}`}
-              >
-                <div className="w-12.5">
-                  <span
-                    className={
-                      row.rank === 1
-                        ? "text-accent-amber"
-                        : "text-text-secondary"
-                    }
-                  >
-                    {row.rank}
-                  </span>
-                </div>
-                <div className="w-17.5">
-                  <span className="font-bold text-accent-red">{row.score}</span>
-                </div>
-                <div className="flex flex-1 flex-col gap-0.5">
-                  {row.code.map((line) => (
-                    <span
-                      key={line}
-                      className={
-                        line.startsWith("//") || line.startsWith("--")
-                          ? "text-text-tertiary"
-                          : "text-text-primary"
-                      }
-                    >
-                      {line}
-                    </span>
-                  ))}
-                </div>
-                <div className="w-25 text-text-secondary">{row.lang}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Fade Hint */}
-          <p className="text-center text-xs text-text-tertiary">
-            {"showing top 3 · "}
-            <Link
-              href="/leaderboard"
-              className="transition-colors hover:text-text-secondary"
-            >
-              view full leaderboard {">>"}
-            </Link>
-          </p>
+          {/* Table + Footer (streamed via Suspense) */}
+          <Suspense fallback={<LeaderboardPreviewSkeleton />}>
+            <LeaderboardPreview />
+          </Suspense>
         </div>
       </main>
     </HydrateClient>

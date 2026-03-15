@@ -1,3 +1,4 @@
+import { cacheLife } from "next/cache";
 import type { ReactNode } from "react";
 import type { BundledLanguage } from "shiki";
 import { codeToHtml } from "shiki";
@@ -30,6 +31,16 @@ function DefaultHeader({ filename }: { filename?: string }) {
   );
 }
 
+async function cachedHighlight(code: string, lang: BundledLanguage) {
+  "use cache";
+  cacheLife("max");
+
+  return codeToHtml(code, {
+    lang,
+    theme: "vesper",
+  });
+}
+
 async function CodeBlock({
   code,
   lang,
@@ -37,10 +48,7 @@ async function CodeBlock({
   className,
   header,
 }: CodeBlockProps) {
-  const html = await codeToHtml(code, {
-    lang,
-    theme: "vesper",
-  });
+  const html = await cachedHighlight(code, lang);
 
   return (
     <div

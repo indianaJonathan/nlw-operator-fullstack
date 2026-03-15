@@ -1,3 +1,4 @@
+import type { BundledLanguage as BundledLanguageFull } from "shiki";
 import type { BundledLanguage } from "shiki/bundle/web";
 
 type Language = {
@@ -62,4 +63,38 @@ const languageList = Object.entries(languages)
   .map(([key, lang]) => ({ key, label: lang.label }))
   .sort((a, b) => a.label.localeCompare(b.label));
 
-export { languages, languageList, hljsToKey, AUTO_DETECT_KEY, type Language };
+/**
+ * Maps DB language enum values to shiki BundledLanguage keys.
+ * Used by server components to highlight code from the database.
+ *
+ * Uses the full shiki bundle (not web bundle) since server components
+ * have access to all languages (go, rust, ruby, swift, kotlin, etc.).
+ */
+const shikiLangMap: Record<string, BundledLanguageFull> = {
+  javascript: "javascript",
+  typescript: "typescript",
+  python: "python",
+  java: "java",
+  sql: "sql",
+  go: "go",
+  rust: "rust",
+  ruby: "ruby",
+  php: "php",
+  c: "c",
+  cpp: "cpp",
+  csharp: "csharp",
+  swift: "swift",
+  kotlin: "kotlin",
+  html: "html",
+  css: "css",
+  shell: "shellscript",
+};
+
+export {
+  languages,
+  languageList,
+  hljsToKey,
+  shikiLangMap,
+  AUTO_DETECT_KEY,
+  type Language,
+};
