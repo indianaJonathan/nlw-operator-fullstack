@@ -28,15 +28,14 @@ function ScoreRing({
   return (
     <div
       className={twMerge(
-        "relative inline-flex items-center justify-center",
+        "relative inline-flex size-30 items-center justify-center md:size-45",
         className,
       )}
-      style={{ width: size, height: size }}
       {...props}
     >
       <svg
-        width={size}
-        height={size}
+        width="100%"
+        height="100%"
         viewBox={`0 0 ${size} ${size}`}
         className="absolute inset-0 -rotate-90"
       >
@@ -80,13 +79,13 @@ function ScoreRing({
       <div className="flex items-end gap-0.5">
         <span
           className={twMerge(
-            "font-mono text-5xl font-bold",
+            "font-mono text-3xl font-bold md:text-5xl",
             getScoreColor(score),
           )}
         >
           {score}
         </span>
-        <span className="font-mono text-base text-text-tertiary">
+        <span className="font-mono text-xs text-text-tertiary md:text-base">
           /{maxScore}
         </span>
       </div>

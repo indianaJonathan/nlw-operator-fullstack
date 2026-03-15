@@ -15,7 +15,7 @@ function LeaderboardEntriesSkeleton() {
           className="overflow-hidden rounded border border-border-primary"
         >
           {/* Header */}
-          <div className="flex h-10 items-center gap-3 border-b border-border-primary px-4">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-border-primary px-4 py-2 md:h-10 md:flex-nowrap md:py-0">
             <div className="h-4 w-10 animate-pulse rounded bg-bg-elevated" />
             <div className="h-4 w-20 animate-pulse rounded bg-bg-elevated" />
             <span className="flex-1" />

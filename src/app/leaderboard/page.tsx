@@ -5,7 +5,7 @@ import { LeaderboardEntriesSkeleton } from "@/components/leaderboard-entries-ske
 export default function LeaderboardPage() {
   return (
     <main className="min-h-screen">
-      <div className="mx-auto flex max-w-5xl flex-col gap-10 px-20 py-10">
+      <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-6 md:px-20 md:py-10">
         {/* Hero Section */}
         <div className="flex flex-col gap-4">
           <h1 className="flex items-center gap-3 font-mono">

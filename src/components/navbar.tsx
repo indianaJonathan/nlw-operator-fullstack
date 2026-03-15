@@ -6,7 +6,7 @@ async function Navbar() {
   const session = await auth();
 
   return (
-    <header className="flex h-14 items-center justify-between border-b border-border-primary bg-bg-page pl-10">
+    <header className="flex h-14 items-center justify-between border-b border-border-primary bg-bg-page px-4 md:pl-10 md:pr-0">
       <Link href="/" className="flex items-center gap-2 font-mono">
         <span className="text-xl font-bold text-accent-green">{">"}</span>
         <span className="text-lg font-medium text-text-primary">devroast</span>

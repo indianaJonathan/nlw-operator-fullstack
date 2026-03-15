@@ -17,10 +17,10 @@ export default async function Home() {
     <HydrateClient>
       <main className="min-h-screen">
         {/* Hero + Code Input */}
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 px-10 pt-20">
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 px-4 pt-10 md:px-10 md:pt-20">
           {/* Hero Title */}
           <div className="flex flex-col items-center gap-3">
-            <h1 className="flex items-center gap-3 font-mono text-4xl font-bold">
+            <h1 className="flex items-center gap-3 font-mono text-xl font-bold md:text-4xl">
               <span className="text-accent-green">$</span>
               <span>paste your code. get roasted.</span>
             </h1>
@@ -38,10 +38,10 @@ export default async function Home() {
         </div>
 
         {/* Spacer */}
-        <div className="h-15" />
+        <div className="h-8 md:h-15" />
 
         {/* Leaderboard Preview */}
-        <div className="mx-auto flex max-w-5xl flex-col gap-6 px-10 pb-15">
+        <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 pb-15 md:px-10">
           {/* Title Row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 font-mono text-sm font-bold">

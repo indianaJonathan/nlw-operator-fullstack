@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AnalysisCard } from "@/components/ui/analysis-card";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
+import { CopyButton } from "@/components/ui/copy-button";
 import { ScoreRing } from "@/components/ui/score-ring";
 import { SplitDiff } from "@/components/ui/split-diff";
 import { generateSplitDiff } from "@/lib/generate-diff";
@@ -90,9 +91,9 @@ export default async function RoastPage({
 
   return (
     <main className="min-h-screen">
-      <div className="mx-auto flex max-w-5xl flex-col gap-10 px-20 py-10">
+      <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-6 md:px-20 md:py-10">
         {/* Score Hero */}
-        <div className="flex items-center gap-12">
+        <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:gap-12">
           <ScoreRing score={score} />
 
           <div className="flex flex-1 flex-col gap-4">
@@ -100,7 +101,7 @@ export default async function RoastPage({
               verdict: {verdict.replaceAll("_", " ")}
             </Badge>
 
-            <p className="font-mono text-xl leading-relaxed text-text-primary">
+            <p className="font-mono text-base leading-relaxed text-text-primary md:text-xl">
               {`"${roast}"`}
             </p>
 
@@ -162,7 +163,19 @@ export default async function RoastPage({
             <span className="text-text-primary">your_submission</span>
           </div>
 
-          <CodeBlock code={code} lang={shikiLang} />
+          <CodeBlock
+            code={code}
+            lang={shikiLang}
+            header={
+              <>
+                <span className="size-2.5 rounded-full bg-accent-red" />
+                <span className="size-2.5 rounded-full bg-accent-amber" />
+                <span className="size-2.5 rounded-full bg-accent-green" />
+                <span className="flex-1" />
+                <CopyButton text={code} />
+              </>
+            }
+          />
         </div>
 
         {/* Divider */}
@@ -175,7 +188,7 @@ export default async function RoastPage({
             <span className="text-text-primary">detailed_analysis</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
             {issues.map((issue) => (
               <AnalysisCard.Root key={issue.id}>
                 <Badge variant={issue.severity}>{issue.severity}</Badge>
@@ -200,7 +213,11 @@ export default async function RoastPage({
                 <span className="text-text-primary">suggested_fix</span>
               </div>
 
-              <SplitDiff.Root rows={diffRows} />
+              <SplitDiff.Root
+                rows={diffRows}
+                originalCode={code}
+                suggestedCode={suggestedCode ?? undefined}
+              />
             </div>
           </>
         )}

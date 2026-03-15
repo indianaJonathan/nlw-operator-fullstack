@@ -183,7 +183,7 @@ function CodeEditorSection({ isAuthenticated }: CodeEditorSectionProps) {
       </CodeEditor.Root>
 
       {/* Actions Bar */}
-      <div className="flex w-full max-w-195 items-center justify-between">
+      <div className="flex w-full max-w-195 flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-4">
             <Toggle
@@ -191,7 +191,7 @@ function CodeEditorSection({ isAuthenticated }: CodeEditorSectionProps) {
               onCheckedChange={setRoastMode}
               label="roast mode"
             />
-            <span className="text-xs text-text-tertiary">
+            <span className="hidden text-xs text-text-tertiary md:inline">
               {roastMode
                 ? "// maximum sarcasm enabled"
                 : "// professional mode"}
@@ -208,7 +208,7 @@ function CodeEditorSection({ isAuthenticated }: CodeEditorSectionProps) {
         <Button
           variant="primary"
           disabled={!hasCode || isOverLimit || createSubmission.isPending}
-          className="disabled:cursor-not-allowed enabled:cursor-pointer"
+          className="w-full disabled:cursor-not-allowed enabled:cursor-pointer md:w-auto"
           onClick={handleSubmit}
         >
           {createSubmission.isPending ? "$ roasting..." : "$ roast_my_code"}

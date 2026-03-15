@@ -52,3 +52,4 @@ Specs são documentos de decisão técnica criados **antes** da implementação.
 | `trpc.md` | API layer | tRPC v11, sem superjson, prefetch+hydrate para SSR, ~35 kB bundle, 4 procedures planejadas |
 | `github-auth.md` | Autenticacao GitHub | Auth.js v5 + Drizzle adapter, sessao database, `protectedProcedure` no tRPC, userId NOT NULL em submissions, campo `anonymous` |
 | `user-roasts.md` | Meus Roasts + navbar | Pagina `/my-roasts`, dropdown de perfil com `@base-ui/react` Menu, modal de login, leaderboard com autoria, toggle anonymous |
+| `responsive-layout.md` | Layout responsivo | Breakpoint `md:` (768px), mobile-first, leaderboard em cards no mobile, ScoreRing responsivo, split diff com scroll horizontal |

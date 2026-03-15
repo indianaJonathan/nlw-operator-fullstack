@@ -34,7 +34,7 @@ function EntryHeader({
   const lineLabel = lines === 1 ? "1 line" : `${lines} lines`;
 
   return (
-    <div className="flex h-10 items-center gap-3 border-b border-border-primary px-4">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-border-primary px-4 py-2 md:h-10 md:flex-nowrap md:py-0">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-1.5 font-mono text-xs">
           <span className="text-text-tertiary">score:</span>

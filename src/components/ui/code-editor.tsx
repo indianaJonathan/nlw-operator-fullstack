@@ -211,7 +211,12 @@ function CodeEditorBody({
   );
 
   return (
-    <div className={twMerge("min-h-90 max-h-120 overflow-y-auto", className)}>
+    <div
+      className={twMerge(
+        "min-h-60 max-h-80 overflow-y-auto md:min-h-90 md:max-h-120",
+        className,
+      )}
+    >
       <div className="flex">
         {/* Line Numbers */}
         <div
