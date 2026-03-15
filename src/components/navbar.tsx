@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { twMerge } from "tailwind-merge";
 import { auth } from "@/auth";
 import { NavbarAuth } from "@/components/navbar-auth";
 
@@ -6,7 +7,12 @@ async function Navbar() {
   const session = await auth();
 
   return (
-    <header className="flex h-14 items-center justify-between border-b border-border-primary bg-bg-page px-4 md:pl-10 md:pr-0">
+    <header
+      className={twMerge(
+        "flex h-14 items-center justify-between border-b border-border-primary bg-bg-page",
+        session ? "px-4 md:px-10" : "pl-4 pr-0 md:pl-10",
+      )}
+    >
       <Link href="/" className="flex items-center gap-2 font-mono">
         <span className="text-xl font-bold text-accent-green">{">"}</span>
         <span className="text-lg font-medium text-text-primary">devroast</span>
