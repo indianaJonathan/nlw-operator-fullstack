@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AnalysisCard } from "@/components/ui/analysis-card";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +8,44 @@ import { SplitDiff } from "@/components/ui/split-diff";
 import { generateSplitDiff } from "@/lib/generate-diff";
 import { shikiLangMap } from "@/lib/languages";
 import { caller } from "@/trpc/server";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const result = await caller.submission.getById({ id });
+
+  if (!result) {
+    return { title: "DevRoast" };
+  }
+
+  const title = `DevRoast — ${result.score}/10`;
+  const description = result.roast;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: `/api/roast/${id}/og`,
+          width: 1200,
+          height: 630,
+          type: "image/png",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
 
 function getVerdictBadgeVariant(
   score: number,
